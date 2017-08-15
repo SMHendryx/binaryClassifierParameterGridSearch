@@ -46,6 +46,7 @@ del r
 y = y.reshape(c,)
 scores = cross_val_score(LR, X, y, cv=10, scoring='f1_micro')
 
+#as opposed to cross_val_score, cross_validate returns a dict of float arrays of shape=(n_splits,), including 'test_score', 'train_score', 'fit_time', and 'score_time'
 cvScores = cross_validate(LR, X, y, cv = 10, scoring = 'f1_micro')
 
 #that fits VERY well:
@@ -58,6 +59,7 @@ X = X.ix[:,X.columns != 'PMCID']
 X = X.as_matrix()
 cvScores = cross_validate(LR, X, y, cv = 10, scoring = 'f1_micro')
 
+cvScoresTestedByPaper = cross_validate(LR, X, y, groups = df['PMCID'], cv = 10, scoring = 'f1_micro')
 
 
 
