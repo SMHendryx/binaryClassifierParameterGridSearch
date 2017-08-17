@@ -35,30 +35,46 @@ from sklearn import metrics
 
 
 def cvByPaper(df):
-	"""
-	:param df: a pandas dataframe with a column named 'label', which is the response variable; 
-		a column named PMCID, which is the paper id; 
-		and the rest of the columns are features.
-	:return: training and test scores
-	"""	
-	#make list of PMCIDs:
-	paperIDs = pandas.unique(df.PMCID)
+    """
+    :param df: a pandas dataframe with a column named 'label', which is the response variable; 
+        a column named PMCID, which is the paper id; 
+        and the rest of the columns are features.
+    :return: training and test scores
+    """ 
+    #make list of PMCIDs:
+    paperIDs = pandas.unique(df.PMCID)
 
-	#loop through folds (where each paper is a fold):
-	for(paperID in paperIDs):
-		print("Evaluating: ", paperID)
+    #loop through folds (where each paper is a fold):
+    f1Scores_train = np.zeros(len(paperIDs))
+    f1Scores_cv = np.zeros(len(paperIDs))
+    for(paperID in paperIDs):
+        print("Evaluating: ", paperID)
 
-		#get Training Set:
-		trainingSet = df.loc[df['PMCID'] != paperID]
-		# test that the testSet has the correct number of rows:
-		#df.loc[df['PMCID'] == paperID].shape[0] == df.shape[0] - trainingSet.shape[0]
-		testSet = df.loc[df['PMCID'] == paperID]
+        #get Training Set:
+        trainingSet = df.loc[df['PMCID'] != paperID]
+        # test that the testSet has the correct number of rows:
+        #df.loc[df['PMCID'] == paperID].shape[0] == df.shape[0] - trainingSet.shape[0]
+        testSet = df.loc[df['PMCID'] == paperID]
 
-		#get predictor variable in array (trainX) and response variable(trainy)
-		trainy = trainingSet['label']
-		del trainingSet['label']
-		#remove PMCID:
-		del trainX['PMCID']
+        #get predictor variable in array (X_train) and response variable(y_train)
+        y_train = trainingSet['label']
+        del trainingSet['label']
+        X_train = trainingSet
+        #remove PMCID:
+        del X_train['PMCID']
+        # set up test data:
+        y_test = testSet['label']
+        del testSet['label']
+        X_test = testSet
+        del X_test['PMCID']
+
+        #train the model:
+        # instantiate logistic regression object
+        LR = LogisticRegression(penalty='l1').fit(X_train, y_train)
+        # i am here:
+        score = LR.score(X_test, y_test, scoring = 'f1_micro')
+
+
 
 
 
@@ -69,6 +85,12 @@ inFile = 'features.feather'
 os.chdir(dir)
 
 df = feather.read_dataframe(inFile)
+
+
+# run CV by paper:
+
+
+
 
 # set up data:
 X = df['min_sentenceDistance']
