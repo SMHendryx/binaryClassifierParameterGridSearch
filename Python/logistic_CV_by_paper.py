@@ -34,6 +34,34 @@ from sklearn.model_selection import cross_validate
 from sklearn import metrics
 
 
+def cvByPaper(df):
+	"""
+	:param df: a pandas dataframe with a column named 'label', which is the response variable; 
+		a column named PMCID, which is the paper id; 
+		and the rest of the columns are features.
+	:return: training and test scores
+	"""	
+	#make list of PMCIDs:
+	paperIDs = pandas.unique(df.PMCID)
+
+	#loop through folds (where each paper is a fold):
+	for(paperID in paperIDs):
+		print("Evaluating: ", paperID)
+
+		#get Training Set:
+		trainingSet = df.loc[df['PMCID'] != paperID]
+		# test that the testSet has the correct number of rows:
+		#df.loc[df['PMCID'] == paperID].shape[0] == df.shape[0] - trainingSet.shape[0]
+		testSet = df.loc[df['PMCID'] == paperID]
+
+		#get predictor variable in array (trainX) and response variable(trainy)
+		trainy = trainingSet['label']
+		del trainingSet['label']
+		#remove PMCID:
+		del trainX['PMCID']
+
+
+
 # read in data:
 dir = '/Users/seanmhendryx/reach_context-balancing/reach'
 inFile = 'features.feather'
