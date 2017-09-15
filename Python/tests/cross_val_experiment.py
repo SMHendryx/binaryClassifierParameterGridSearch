@@ -32,6 +32,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import cross_validate
 from sklearn import metrics
+from sklearn.model_selection import StratifiedKFold
 
 
 # read in data:
@@ -50,38 +51,32 @@ y = df['label']
 X = X.reshape((X.size, 1))
 y = y.reshape((y.size, 1))
 
-# instantiate logistic regression object
-LR = LogisticRegression(penalty='l1')
+shouldBeMaxIndexInFirstFold = X.size/10
 
-#fit 
-#model = LR.fit(X, y)
+skf = StratifiedKFold(n_splits=10)
+skf.get_n_splits(X, y)
 
-#VALIDATE
-#Apparently cross_val_score  requires an (R,) shape label instead of (R,1) (which is confusing bc LogisticRegression requires the opposite):
-c, r = y.shape
-del r
-y = y.reshape(c,)
-scores = cross_val_score(LR, X, y, cv=10, scoring='f1_micro')
-np.mean(scores)
-
-#as opposed to cross_val_score, cross_validate returns a dict of float arrays of shape=(n_splits,), including 'test_score', 'train_score', 'fit_time', and 'score_time'
-cvScores = cross_validate(LR, X, y, cv = 10, scoring = 'f1_micro')
-
-#that fits VERY well:
-np.mean(cvScores['test_score'])
-print("Mean test score with only min_sentenceDistnace feature: ", np.mean(cvScores['test_score']))
-#Out[7]: 0.96026284880758261
-
-#let's now train model using all features:
-print("Training models and running CV with all features:")
-X = df.ix[:, df.columns != 'label']
-X = X.ix[:,X.columns != 'PMCID']
-X = X.as_matrix()
-cvScores = cross_validate(LR, X, y, cv = 10, scoring = 'f1_micro')
-print("Cross-Val scores from all features: ", cvScores)
-print("Mean CV test Score from all features: ", np.mean(cvScores['test_score']))
-
-#cvScoresTestedByPaper = cross_validate(LR, X, y, groups = df['PMCID'], cv = 10, scoring = 'f1_micro')
-#np.mean(cvScoresTestedByPaper['test_score'])
+print(skf)
+# |  StratifiedKFold(n_splits=2, random_state=None, shuffle=False)
+for train_index, test_index in skf.split(X, y):
+    #print("TRAIN:", train_index, "TEST:", test_index)
+    X_train, X_test = X[train_index], X[test_index]
+    y_train, y_test = y[train_index], y[test_index]
+    break
 
 
+
+
+
+from sklearn.model_selection import StratifiedKFold
+X1 = np.array([[1, 2], [3, 4], [1, 2], [3, 4]])
+y1 = np.array([0, 0, 1, 1])
+skf = StratifiedKFold(n_splits=2)
+skf.get_n_splits(X, y)
+
+print(skf)  # doctest: +NORMALIZE_WHITESPACE
+# |  StratifiedKFold(n_splits=2, random_state=None, shuffle=False)
+for train_index, test_index in skf.split(X, y):
+    print("TRAIN:", train_index, "TEST:", test_index)
+    X_train, X_test = X[train_index], X[test_index]
+    y_train, y_test = y[train_index], y[test_index]
