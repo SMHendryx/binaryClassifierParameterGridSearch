@@ -37,13 +37,16 @@ def main():
 
     os.chdir(dir)
     
+    print("Reading in file: ", inFile)
     df = pandas.read_csv(inFile)
+    print("Successfully read in file: ", inFile)
 
     #write feather:
     outFileName = os.path.splitext(inFile)[0]
     outFileName += ".feather"
+    print("Writing file: ", outFileName)
     feather.write_dataframe(df, outFileName)
-
+    print("Successfully wrote file: ", outFileName)
 
 
 if __name__ == "__main__":
