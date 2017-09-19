@@ -32,7 +32,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import cross_validate
 from sklearn import metrics
-
+from sklearn import preprocessing
 
 def cvByPaper(df, LR_tolerance = 0.0001):
     """
@@ -69,6 +69,12 @@ def cvByPaper(df, LR_tolerance = 0.0001):
         del testSet['label']
         X_test = testSet
         del X_test['PMCID']
+
+        # Normalize training data and get scaler:
+        scaler = preprocessing.StandardScaler().fit(X_train)
+        X_train = scaler.transform(X_train)
+        X_test = scaler.transform(X_test)
+
 
         #train the model:
         # instantiate logistic regression object
