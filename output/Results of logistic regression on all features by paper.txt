@@ -1,9 +1,123 @@
-{'fit_time': array([ 309.92811489,  203.86083388,  252.00995183,  279.17266917,
-         285.3490901 ,  244.59374714,  259.36520815,  240.07403326,
-         281.54806614,  238.13999701]),
- 'score_time': array([ 0.02923393,  0.01596498,  0.01301885,  0.01507473,  0.01166391,
-         0.01447392,  0.01193905,  0.01215792,  0.01384592,  0.01142693]),
- 'test_score': array([ 0.935073  ,  0.94998447,  0.97452625,  0.95775085,  0.94439267,
-         0.93428616,  0.95479261,  0.93335405,  0.95509633,  0.93753884]),
- 'train_score': array([ 0.97264175,  0.97409165,  0.97300423,  0.9743333 ,  0.97338396,
-         0.97410936,  0.97433375,  0.97350525,  0.97329858,  0.97369557])}
+Evaluating:  b'PMC3032653'
+Training F1
+0.592628051699
+CV F1
+0.123076923077
+Evaluating:  b'PMC2064697'
+Training F1
+0.583970406905
+CV F1
+0.37556561086
+Evaluating:  b'PMC3717960'
+Training F1
+0.583661417323
+CV F1
+0.382978723404
+Evaluating:  b'PMC3233644'
+Training F1
+0.598519226176
+CV F1
+0.0
+Evaluating:  b'PMC2195994'
+Training F1
+0.592165344869
+CV F1
+0.350282485876
+Evaluating:  b'PMC3461631'
+Training F1
+0.61038961039
+CV F1
+0.193905817175
+Evaluating:  b'PMC3058384'
+Training F1
+0.599024390244
+CV F1
+0.161735700197
+Evaluating:  b'PMC534114'
+/Users/seanmhendryx/python3/lib/python3.6/site-packages/sklearn/metrics/classification.py:1135: UndefinedMetricWarning: F-score is ill-defined and being set to 0.0 due to no predicted samples.
+  'precision', 'predicted', average, warn_for)
+Training F1
+0.560112359551
+CV F1
+0.0
+Evaluating:  b'PMC2063868'
+Training F1
+0.562518562519
+CV F1
+0.0309278350515
+Evaluating:  b'PMC2193052'
+Training F1
+0.599326599327
+CV F1
+0.0601503759398
+Evaluating:  b'PMC2773002'
+Training F1
+0.599800895968
+CV F1
+0.328767123288
+Evaluating:  b'PMC3378484'
+Training F1
+0.589799371525
+CV F1
+0.0
+Evaluating:  b'PMC2978746'
+Training F1
+0.612481127328
+CV F1
+0.239543726236
+Evaluating:  b'PMC2156142'
+Training F1
+0.589050920392
+CV F1
+0.0
+Evaluating:  b'PMC420486'
+Training F1
+0.591527987897
+CV F1
+0.305206463196
+Evaluating:  b'PMC3190874'
+Training F1
+0.590391282813
+CV F1
+0.299741602067
+Evaluating:  b'PMC2196001'
+Training F1
+0.602292123872
+CV F1
+0.0
+Evaluating:  b'PMC2743561'
+Training F1
+0.591063623118
+CV F1
+0.285714285714
+Evaluating:  b'PMC4204162'
+Training F1
+0.586223506744
+CV F1
+0.794520547945
+Evaluating:  b'PMC3203906'
+Training F1
+0.586240310078
+CV F1
+0.4
+Evaluating:  b'PMC3392545'
+Training F1
+0.579710144928
+CV F1
+0.0183486238532
+Evaluating:  b'PMC3135394'
+Training F1
+0.591885441527
+CV F1
+0.0
+Evaluating:  b'PMC4052680'
+Training F1
+0.606150061501
+CV F1
+0.45390070922
+Macro Training Average:
+0.591257946378
+
+
+Macro CV Average:
+0.208885502309
