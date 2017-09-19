@@ -181,6 +181,10 @@ os.chdir(dir)
 
 df = feather.read_dataframe(inFile)
 
+# Remove Context and Event IDs:
+del df['EvtID']
+del df['CtxID']
+
 
 # run CV by paper:
 f1Scores_train, f1Scores_cv = cvByPaper(df)
