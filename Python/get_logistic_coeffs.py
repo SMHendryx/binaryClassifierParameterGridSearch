@@ -1,4 +1,4 @@
-# File runs cross validation on binary logistic regression classifier using sklearn functions
+# Gets logistic coefficients for logistic regression trained on ALL context event relations
 #
 # Authored by Sean M. Hendryx while working at the University of Arizona
 # contact: seanmhendryx@email.arizona.edu https://github.com/SMHendryx/binaryClassifierParameterGridSearch
@@ -32,6 +32,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import cross_validate
 from sklearn import metrics
+from sklearn import preprocessing
 
 
 # read in data:
@@ -43,45 +44,32 @@ os.chdir(dir)
 df = feather.read_dataframe(inFile)
 print("Data successfully read in.")
 
-print("Training models and running CV with only min_sentenceDistance feature:")
-# set up data:
-X = df['min_sentenceDistance']
+print("Training LR model with all features:")
+# Remove Context and Event IDs:
+del df['EvtID']
+del df['CtxID']
+X = df.ix[:, df.columns != 'label']
+X = X.ix[:,X.columns != 'PMCID']
+X = X.as_matrix()
+
+# Normalize data:
+scaler = preprocessing.StandardScaler().fit(X)
+X = scaler.transform(X)
+
 y = df['label']
-X = X.reshape((X.size, 1))
 y = y.reshape((y.size, 1))
 
 # instantiate logistic regression object
 LR = LogisticRegression(penalty='l1')
 
 #fit 
-#model = LR.fit(X, y)
+model = LR.fit(X, y)
 
-#VALIDATE
-#Apparently cross_val_score  requires an (R,) shape label instead of (R,1) (which is confusing bc LogisticRegression requires the opposite):
-c, r = y.shape
-del r
-y = y.reshape(c,)
-scores = cross_val_score(LR, X, y, cv=10, scoring='f1_micro')
-np.mean(scores)
+model.coef_
 
-#as opposed to cross_val_score, cross_validate returns a dict of float arrays of shape=(n_splits,), including 'test_score', 'train_score', 'fit_time', and 'score_time'
-cvScores = cross_validate(LR, X, y, cv = 10, scoring = 'f1_micro')
+#Get feature names of the coefficients:
+#https://stackoverflow.com/questions/34649969/how-to-find-the-features-names-of-the-coefficients-using-scikit-linear-regressio
 
-#that fits VERY well:
-np.mean(cvScores['test_score'])
-print("Mean test score with only min_sentenceDistnace feature: ", np.mean(cvScores['test_score']))
-#Out[7]: 0.96026284880758261
 
-#let's now train model using all features:
-print("Training models and running CV with all features:")
-X = df.ix[:, df.columns != 'label']
-X = X.ix[:,X.columns != 'PMCID']
-X = X.as_matrix()
-cvScores = cross_validate(LR, X, y, cv = 10, scoring = 'f1_micro')
-print("Cross-Val scores from all features: ", cvScores)
-print("Mean CV test Score from all features: ", np.mean(cvScores['test_score']))
-
-#cvScoresTestedByPaper = cross_validate(LR, X, y, groups = df['PMCID'], cv = 10, scoring = 'f1_micro')
-#np.mean(cvScoresTestedByPaper['test_score'])
 
 
