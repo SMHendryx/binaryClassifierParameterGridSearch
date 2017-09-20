@@ -60,7 +60,8 @@ y = df['label']
 y = y.reshape((y.size, 1))
 
 # instantiate logistic regression object
-LR = LogisticRegression(penalty='l1')
+LR_tolerance = 0.01
+LR = LogisticRegression(penalty='l1', tol = LR_tolerance)
 
 #fit 
 model = LR.fit(X, y)
