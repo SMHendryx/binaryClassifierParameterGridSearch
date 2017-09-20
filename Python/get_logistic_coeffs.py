@@ -68,8 +68,25 @@ model = LR.fit(X, y)
 
 model.coef_
 
+dir = '/Users/seanmhendryx/githublocal/binaryClassifierParameterGridSearch/output'
+# set wd:
+os.chdir(dir)
+np.savetxt('LR_model_coefficients_from_normalized_data.txt',model.coef_)
+
 #Get feature names of the coefficients:
 #https://stackoverflow.com/questions/34649969/how-to-find-the-features-names-of-the-coefficients-using-scikit-linear-regressio
+del df['label']
+del df['PMCID']
+modelFeatures = df.columns
+print(list(zip(model.coef_, modelFeatures)))
+
+#get n greatest coefficients and their features:
+n = 10
+beta = model.coef_
+ind = np.argpartition(beta, -n)[-n:]
+beta[ind]
+modelFeatures[ind]
+modelFeatures[ind[np.argsort(beta[ind])]]
 
 
 
