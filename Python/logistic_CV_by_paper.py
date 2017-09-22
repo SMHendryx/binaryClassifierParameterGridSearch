@@ -103,7 +103,7 @@ def cvByPaper(df, LR_tolerance = 0.0001):
 
 
 # read in data:
-dir = '/Users/seanmhendryx/reach_context-balancing/reach'
+dir = '/Users/seanmhendryx/Data/context'
 inFile = 'features.feather'
 # set wd:
 os.chdir(dir)

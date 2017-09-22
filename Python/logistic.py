@@ -35,7 +35,7 @@ from sklearn import metrics
 
 
 # read in data:
-dir = '/Users/seanmhendryx/reach_context-balancing/reach'
+dir = '/Users/seanmhendryx/Data/context'
 inFile = 'features.feather'
 # set wd:
 os.chdir(dir)
@@ -43,9 +43,10 @@ os.chdir(dir)
 df = feather.read_dataframe(inFile)
 print("Data successfully read in.")
 
-print("Training models and running CV with only min_sentenceDistance feature:")
+print("Training models and running CV with only sentenceDistance feature:")
 # set up data:
-X = df['min_sentenceDistance']
+#sentenceDistance is the distance between the event and context mention.
+X = df['sentenceDistance']
 y = df['label']
 X = X.reshape((X.size, 1))
 y = y.reshape((y.size, 1))
@@ -61,25 +62,35 @@ LR = LogisticRegression(penalty='l1')
 c, r = y.shape
 del r
 y = y.reshape(c,)
-scores = cross_val_score(LR, X, y, cv=10, scoring='f1_micro')
-np.mean(scores)
+#scores = cross_val_score(LR, X, y, cv=10, scoring='f1_micro')
+#np.mean(scores)
 
 #as opposed to cross_val_score, cross_validate returns a dict of float arrays of shape=(n_splits,), including 'test_score', 'train_score', 'fit_time', and 'score_time'
 cvScores = cross_validate(LR, X, y, cv = 10, scoring = 'f1_micro')
 
+print(cvScores)
+
 #that fits VERY well:
 np.mean(cvScores['test_score'])
 print("Mean test score with only min_sentenceDistnace feature: ", np.mean(cvScores['test_score']))
+# with features aggregated by context type:
 #Out[7]: 0.96026284880758261
+# With features NOT aggregated by context type:
+#Mean test score with only min_sentenceDistnace feature:  0.849060858147
 
-#let's now train model using all features:
+#-----------------------------------------------------------------------------------------------------#
+# Train model using ALL features:
 print("Training models and running CV with all features:")
-X = df.ix[:, df.columns != 'label']
-X = X.ix[:,X.columns != 'PMCID']
+X = df.loc[:, df.columns != 'label']
+X = X.loc[:,X.columns != 'PMCID']
+X = X.loc[:,X.columns != 'CtxID']
+X = X.loc[:,X.columns != 'EvtID']
 X = X.as_matrix()
 cvScores = cross_validate(LR, X, y, cv = 10, scoring = 'f1_micro')
 print("Cross-Val scores from all features: ", cvScores)
 print("Mean CV test Score from all features: ", np.mean(cvScores['test_score']))
+# With features NOT aggregated by context type:
+#Mean CV test Score from all features:  0.827537216448
 
 #cvScoresTestedByPaper = cross_validate(LR, X, y, groups = df['PMCID'], cv = 10, scoring = 'f1_micro')
 #np.mean(cvScoresTestedByPaper['test_score'])

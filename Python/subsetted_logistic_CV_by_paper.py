@@ -132,28 +132,35 @@ print("\n")
 print("Macro CV Average:")
 print(np.mean(f1Scores_cv))
 
-# compute micro average:
+##############################################################################
+#TODO: this isn't correct.
+# Compute micro average:
 N = len(df)
-i = 0
-macroAverage_train = 0.0
-macroAverage_test = 0.0
-
-
 #make list of PMCIDs:
 paperIDs = pandas.unique(df.PMCID)
+microAverages_train = np.empty(len(paperIDs))
+microAverages_test = np.empty(len(paperIDs))
+i = 0
 for paperID in paperIDs:
     n_i_test = len(df.loc[df['PMCID'] == paperID])
     #compute weighted averge chunk:
     av_w_i_test = (n_i_test/N) * f1Scores_cv[i]
+    print("weighted average: ", av_w_i_test)
 
     n_i_train = len(df.loc[df['PMCID'] != paperID])
     #compute weighted averge chunk:
     av_w_i_train = (n_i_train/N) * f1Scores_train[i]
     print("weighted average: ", av_w_i_train)
 
-    macroAverage_train += av_w_i_train
-    macroAverage_test += av_w_i_test
+    microAverages_train[i] = av_w_i_train
+    microAverages_test[i] = av_w_i_test
     i += 1
+
+print("Micro Training Average:")
+print(np.mean(microAverages_train))
+print("\n")
+print("Micro CV Average:")
+print(np.mean(microAverages_test))
 
 
 
