@@ -32,7 +32,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import cross_validate
 from sklearn import metrics
-
+from sklearn import preprocessing
 
 def cvByPaper(df, LR_tolerance = 0.0001):
     """
@@ -53,112 +53,32 @@ def cvByPaper(df, LR_tolerance = 0.0001):
         print("Evaluating: ", paperID)
 
         #get Training Set:
-        # explicit copy so things don't get deleted
-        trainingSet = pandas.DataFrame.copy(df.loc[df['PMCID'] != paperID])
-        # test that the testSet has the correct number of rows:
-        #df.loc[df['PMCID'] == paperID].shape[0] == df.shape[0] - trainingSet.shape[0]
-        testSet = pandas.DataFrame.copy(df.loc[df['PMCID'] == paperID])
-
-        #get predictor variable in array (X_train) and response variable(y_train)
-        y_train = trainingSet['label']
-        #Convert from pandas DataFrame to numpy ndarray:
-        y_train = y_train.values
-        # reshape so sklearn is happy:
-        #y_train = y_train.reshape(-1,1)
-        del trainingSet['label']
-        X_train = trainingSet
-        #remove PMCID:
-        del X_train['PMCID']
-        # Select just min_sentenceDistance feature:
-        X_train = X_train['min_sentenceDistance']
-        #Convert from pandas DataFrame to numpy ndarray:
-        X_train = X_train.values
-        # reshape so sklearn is happy:
-        X_train = X_train.reshape(-1,1)
-        # set up test data:
-        y_test = testSet['label']
-        del testSet['label']
-        X_test = testSet
-        del X_test['PMCID']
-        # Select just min_sentenceDistance feature:
-        X_test = X_test['min_sentenceDistance']
-        #Reshape your data either using array.reshape(-1, 1) if your data has a single feature
-        #make sklearn happy:
-        X_test = X_test.values.reshape(-1,1)
-        y_test = y_test.values.reshape(-1,1)
-
-        #train the model:
-        # instantiate logistic regression object
-        LR = LogisticRegression(penalty='l1', tol = LR_tolerance).fit(X_train, y_train)
-   
-        # Compute predictions on train and test (cv):
-        y_train_predicted = LR.predict(X_train)
-        f1Score_train = metrics.f1_score(y_train, y_train_predicted)
-        p = metrics.precision_score(y_train, y_train_predicted)
-        r = metrics.recall_score(y_train, y_train_predicted)
-        #Store the results:
-        f1Scores_train[i] = f1Score_train
-
-        y_test_predicted = LR.predict(X_test)
-        f1Score_test = metrics.f1_score(y_test, y_test_predicted)
-        f1Scores_cv[i] = f1Score_test
-        
-        print("Training F1")
-        print(f1Score_train)
-
-        print("CV F1")
-        print(f1Score_test)
-        i += 1
-
-    return(f1Scores_train, f1Scores_cv)
-
-"""
-def run_cv(k = 10, df, LR_tolerance = .01):
-    
-    :param k: number of folds
-    :param df: a pandas dataframe with a column named 'label', which is the response variable; 
-        a column named PMCID, which is the paper id; 
-        and the rest of the columns are features.
-    :param LR_tolerance: sets the parameter of sklearn's LogisticRegression function (sklearn default is .0001), .01 leads to faster convergence.
-    :return: training and test scores in two seperate numpy arrays
-    
-    #remove PMCID:
-    df = np.copy(df)
-    del df['PMCID']
-    step = len(df)/k
-
-    #add index:
-    df['index'] = np.arange(len(df))
-
-    for i in np.arange(k):
-        df['index' < step] = i
-
-    #df['fold_index'] = np.arange(k)
-    
-    #loop through folds:
-    f1Scores_train = np.zeros(len(paperIDs))
-    f1Scores_cv = np.zeros(len(paperIDs))
-    i = 0
-    for paperID in paperIDs:
-        print("Evaluating: ", paperID)
-
-        #get Training Set:
         trainingSet = df.loc[df['PMCID'] != paperID]
         # test that the testSet has the correct number of rows:
         #df.loc[df['PMCID'] == paperID].shape[0] == df.shape[0] - trainingSet.shape[0]
         testSet = df.loc[df['PMCID'] == paperID]
 
         #get predictor variable in array (X_train) and response variable(y_train)
+        X_train = trainingSet['sentenceDistance'].reshape(-1, 1)
         y_train = trainingSet['label']
-        del trainingSet['label']
-        X_train = trainingSet
-        #remove PMCID:
-        del X_train['PMCID']
-        # set up test data:
+        X_test = testSet['sentenceDistance'].reshape(-1, 1)
         y_test = testSet['label']
-        del testSet['label']
-        X_test = testSet
-        del X_test['PMCID']
+        
+        #del trainingSet['label']
+        #X_train = trainingSet
+        #remove PMCID:
+        #del X_train['PMCID']
+        # set up test data:
+        #y_test = testSet['label']
+        #del testSet['label']
+        #X_test = testSet
+        #del X_test['PMCID']
+
+        # Normalize training data and get scaler: (not needed if we're only using 1 feature?)
+        scaler = preprocessing.StandardScaler().fit(X_train)
+        X_train = scaler.transform(X_train)
+        X_test = scaler.transform(X_test)
+
 
         #train the model:
         # instantiate logistic regression object
@@ -186,21 +106,22 @@ def run_cv(k = 10, df, LR_tolerance = .01):
     return(f1Scores_train, f1Scores_cv)
 
 
-"""
-
-
-
 # read in data:
-dir = '/Users/seanmhendryx/reach_context-balancing/reach'
+dir = '/Users/seanmhendryx/Data/context'
 inFile = 'features.feather'
 # set wd:
 os.chdir(dir)
 
 df = feather.read_dataframe(inFile)
 
+# Remove Context and Event IDs:
+del df['EvtID']
+del df['CtxID']
+
 
 # run CV by paper:
 f1Scores_train, f1Scores_cv = cvByPaper(df)
+#Scala LR_tolerance = 0.01
 
 print("Macro Training Average:")
 print(np.mean(f1Scores_train))
@@ -209,6 +130,7 @@ print("Macro CV Average:")
 print(np.mean(f1Scores_cv))
 
 # compute micro average:
+paperIDs = pandas.unique(df.PMCID)
 N = len(df)
 i = 0
 macroAverage_train = 0.0

@@ -116,6 +116,9 @@ del df['CtxID']
 
 
 # run CV by paper:
+# Run with these hyperperameters:
+#In [5]: clf.best_params_
+#Out[5]: {'C': 0.0001, 'penalty': 'l2'}
 f1Scores_train, f1Scores_cv = cvByPaper(df, LR_tolerance = 0.01)
 
 print("Macro Training Average:")
@@ -125,6 +128,7 @@ print("Macro CV Average:")
 print(np.mean(f1Scores_cv))
 
 # compute micro average:
+paperIDs = pandas.unique(df.PMCID)
 N = len(df)
 i = 0
 macroAverage_train = 0.0
