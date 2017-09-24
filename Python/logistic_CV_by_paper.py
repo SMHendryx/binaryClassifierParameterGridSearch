@@ -78,7 +78,7 @@ def cvByPaper(df, LR_tolerance = 0.0001):
 
         #train the model:
         # instantiate logistic regression object
-        LR = LogisticRegression(penalty='l1', tol = LR_tolerance).fit(X_train, y_train)
+        LR = LogisticRegression(penalty='l2', C = 0.0001, tol = LR_tolerance).fit(X_train, y_train)
         
         # Compute predictions on train and test (cv):
         y_train_predicted = LR.predict(X_train)
@@ -119,7 +119,8 @@ del df['CtxID']
 # Run with these hyperperameters:
 #In [5]: clf.best_params_
 #Out[5]: {'C': 0.0001, 'penalty': 'l2'}
-f1Scores_train, f1Scores_cv = cvByPaper(df, LR_tolerance = 0.01)
+f1Scores_train, f1Scores_cv = cvByPaper(df)
+# LR_tolerance = 0.01
 
 print("Macro Training Average:")
 print(np.mean(f1Scores_train))
@@ -127,6 +128,11 @@ print("\n")
 print("Macro CV Average:")
 print(np.mean(f1Scores_cv))
 
+
+
+
+
+#this is not correct, or at least needs to be tested to ensure it is correct.:
 # compute micro average:
 paperIDs = pandas.unique(df.PMCID)
 N = len(df)
