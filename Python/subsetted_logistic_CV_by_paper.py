@@ -1,22 +1,8 @@
 # File runs cross validation on subsetted dataset (one paper removed from training and test sets) binary logistic regression classifier using sklearn functions
 #
-# Authored by Sean M. Hendryx while working at the University of Arizona
-# contact: seanmhendryx@email.arizona.edu https://github.com/SMHendryx/binaryClassifierParameterGridSearch
-# Copyright (c)  2017 Sean Hendryx
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-####################################################################################################################################################################################
+# Author: Sean Hendryx
+# 2017
+# seanmhendryx@email.arizona.edu https://github.com/SMHendryx/binaryClassifierParameterGridSearch
 
 
 import sys
@@ -131,39 +117,4 @@ print(np.mean(f1Scores_train))
 print("\n")
 print("Macro CV Average:")
 print(np.mean(f1Scores_cv))
-
-##############################################################################
-#TODO: this isn't correct.
-# Compute micro average:
-N = len(df)
-#make list of PMCIDs:
-paperIDs = pandas.unique(df.PMCID)
-microAverages_train = np.empty(len(paperIDs))
-microAverages_test = np.empty(len(paperIDs))
-i = 0
-for paperID in paperIDs:
-    n_i_test = len(df.loc[df['PMCID'] == paperID])
-    #compute weighted averge chunk:
-    av_w_i_test = (n_i_test/N) * f1Scores_cv[i]
-    print("weighted average: ", av_w_i_test)
-
-    n_i_train = len(df.loc[df['PMCID'] != paperID])
-    #compute weighted averge chunk:
-    av_w_i_train = (n_i_train/N) * f1Scores_train[i]
-    print("weighted average: ", av_w_i_train)
-
-    microAverages_train[i] = av_w_i_train
-    microAverages_test[i] = av_w_i_test
-    i += 1
-
-print("Micro Training Average:")
-print(np.mean(microAverages_train))
-print("\n")
-print("Micro CV Average:")
-print(np.mean(microAverages_test))
-
-
-
-
-
 

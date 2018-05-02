@@ -35,12 +35,10 @@ from sklearn import metrics
 
 
 # read in data:
-dir = '/Users/seanmhendryx/Data/context'
-inFile = 'features.feather'
-# set wd:
-os.chdir(dir)
+in_file = '/Users/seanmhendryx/Data/context/features.feather'
 
-df = feather.read_dataframe(inFile)
+
+df = feather.read_dataframe(in_file)
 print("Data successfully read in.")
 
 print("Training models and running CV with only sentenceDistance feature:")
@@ -66,13 +64,13 @@ y = y.reshape(c,)
 #np.mean(scores)
 
 #as opposed to cross_val_score, cross_validate returns a dict of float arrays of shape=(n_splits,), including 'test_score', 'train_score', 'fit_time', and 'score_time'
-cvScores = cross_validate(LR, X, y, cv = 10, scoring = 'f1_micro')
+cv_scores = cross_validate(LR, X, y, cv = 10, scoring = 'f1_micro')
 
-print(cvScores)
+print(cv_scores)
 
 #that fits VERY well:
-np.mean(cvScores['test_score'])
-print("Mean test score with only min_sentenceDistnace feature: ", np.mean(cvScores['test_score']))
+np.mean(cv_scores['test_score'])
+print("Mean test score with only min_sentenceDistnace feature: ", np.mean(cv_scores['test_score']))
 # with features aggregated by context type:
 #Out[7]: 0.96026284880758261
 # With features NOT aggregated by context type:
@@ -86,13 +84,13 @@ X = X.loc[:,X.columns != 'PMCID']
 X = X.loc[:,X.columns != 'CtxID']
 X = X.loc[:,X.columns != 'EvtID']
 X = X.as_matrix()
-cvScores = cross_validate(LR, X, y, cv = 10, scoring = 'f1_micro')
-print("Cross-Val scores from all features: ", cvScores)
-print("Mean CV test Score from all features: ", np.mean(cvScores['test_score']))
+cv_scores = cross_validate(LR, X, y, cv = 10, scoring = 'f1_micro')
+print("Cross-Val scores from all features: ", cv_scores)
+print("Mean CV test Score from all features: ", np.mean(cv_scores['test_score']))
 # With features NOT aggregated by context type:
 #Mean CV test Score from all features:  0.827537216448
 
-#cvScoresTestedByPaper = cross_validate(LR, X, y, groups = df['PMCID'], cv = 10, scoring = 'f1_micro')
-#np.mean(cvScoresTestedByPaper['test_score'])
+#cv_scoresTestedByPaper = cross_validate(LR, X, y, groups = df['PMCID'], cv = 10, scoring = 'f1_micro')
+#np.mean(cv_scoresTestedByPaper['test_score'])
 
 

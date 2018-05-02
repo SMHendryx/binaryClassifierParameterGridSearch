@@ -1,22 +1,8 @@
 # File runs cross validation on binary logistic regression classifier using sklearn functions
 #
-# Authored by Sean M. Hendryx while working at the University of Arizona
-# contact: seanmhendryx@email.arizona.edu https://github.com/SMHendryx/binaryClassifierParameterGridSearch
-# Copyright (c)  2017 Sean Hendryx
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-####################################################################################################################################################################################
+# Author: Sean Hendryx
+# 2017
+# seanmhendryx@email.arizona.edu https://github.com/SMHendryx/binaryClassifierParameterGridSearch
 
 
 import sys
@@ -84,7 +70,8 @@ print("Mean test score with only min_sentenceDistnace feature: ", np.mean(cvScor
 #-----------------------------------------------------------------------------------------------------#
 # Train model using ALL features:
 print("Training models and running CV with all features:")
-X = df.loc[:, df.columns != 'label']
+not_features = ['PMCID', 'label', 'EvtID', 'CtxID']
+X = df.loc[:, df.columns not in not_features]
 X = X.loc[:,X.columns != 'PMCID']
 X = X.loc[:,X.columns != 'CtxID']
 X = X.loc[:,X.columns != 'EvtID']

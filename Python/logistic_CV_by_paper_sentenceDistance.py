@@ -1,22 +1,8 @@
 # File runs cross validation on binary logistic regression classifier using sklearn functions
 #
-# Authored by Sean M. Hendryx while working at the University of Arizona
-# contact: seanmhendryx@email.arizona.edu https://github.com/SMHendryx/binaryClassifierParameterGridSearch
-# Copyright (c)  2017 Sean Hendryx
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-####################################################################################################################################################################################
+# Author: Sean Hendryx
+# 2017
+# seanmhendryx@email.arizona.edu https://github.com/SMHendryx/binaryClassifierParameterGridSearch
 
 
 import sys
@@ -61,8 +47,10 @@ def cvByPaper(df, LR_tolerance = 0.0001):
         #get predictor variable in array (X_train) and response variable(y_train)
         X_train = trainingSet['sentenceDistance'].reshape(-1, 1)
         y_train = trainingSet['label']
+        #y_train = y_train.reshape((y_train.size, 1))
         X_test = testSet['sentenceDistance'].reshape(-1, 1)
         y_test = testSet['label']
+        #y_test = y_test.reshape((y_test.size, 1))
         
         #del trainingSet['label']
         #X_train = trainingSet
@@ -82,7 +70,8 @@ def cvByPaper(df, LR_tolerance = 0.0001):
 
         #train the model:
         # instantiate logistic regression object
-        LR = LogisticRegression(penalty='l1', tol = LR_tolerance).fit(X_train, y_train)
+        LR = LogisticRegression(penalty='l1', tol = LR_tolerance)
+        LR.fit(X_train, y_train)
         
         # Compute predictions on train and test (cv):
         y_train_predicted = LR.predict(X_train)
@@ -128,29 +117,4 @@ print(np.mean(f1Scores_train))
 print("\n")
 print("Macro CV Average:")
 print(np.mean(f1Scores_cv))
-
-# compute micro average:
-paperIDs = pandas.unique(df.PMCID)
-N = len(df)
-i = 0
-macroAverage_train = 0.0
-macroAverage_test = 0.0
-for paperID in paperIDs:
-    n_i_test = len(df.loc[df['PMCID'] == paperID])
-    #compute weighted averge chunk:
-    av_w_i_test = (n_i_test/N) * f1Scores_cv[i]
-
-    n_i_train = len(df.loc[df['PMCID'] != paperID])
-    #compute weighted averge chunk:
-    av_w_i_train = (n_i_train/N) * f1Scores_train[i]
-    print("weighted average: ", av_w_i_train)
-
-    macroAverage_train += av_w_i_train
-    macroAverage_test += av_w_i_test
-    i += 1
-
-
-
-
-
 

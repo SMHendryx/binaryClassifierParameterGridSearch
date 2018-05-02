@@ -1,25 +1,10 @@
 # File reads in csv and writes to feather
-# Authored by Sean M. Hendryx while working at the University of Arizona
-# contact: seanmhendryx@email.arizona.edu //github.com/SMHendryx/binaryClassifierParameterGridSearch
-# Copyright (c)  2017 Sean Hendryx
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-####################################################################################################################################################################################
+# Author: Sean Hendryx
 
 
 #Example usage:
-#python convertCSVToFeather.py /Users/seanmhendryx/reach_context-balancing/reach features.csv
+#python convertCSVToFeather.py /Users/seanmhendryx/reach_context-balancing/reach/features.csv
+#python convertCSVToFeather.py /your/path/to.csv
 
 import sys
 import os
@@ -29,24 +14,31 @@ import feather
 
 def main():
     #get args:
-    # first argument (index 1 bc 0 is the file name) is the directory in which to read AND write, second is the input csv file (inFile)
     args = sys.argv
-    # Set working directory:
-    dir = args[1]
-    inFile = args[2]
-
-    os.chdir(dir)
+    in_file = args[1]
     
-    print("Reading in file: ", inFile)
-    df = pandas.read_csv(inFile)
-    print("Successfully read in file: ", inFile)
+    checkExists(in_file)
+
+    print("Reading in file: ", in_file)
+    df = pandas.read_csv(in_file)
+    print("Successfully read in file: ", in_file)
 
     #write feather:
-    outFileName = os.path.splitext(inFile)[0]
-    outFileName += ".feather"
-    print("Writing file: ", outFileName)
-    feather.write_dataframe(df, outFileName)
-    print("Successfully wrote file: ", outFileName)
+    out_file_name = os.path.splitext(in_file)[0]
+    out_file_name += ".feather"
+    print("Writing file: ", out_file_name)
+    try:
+        feather.write_dataframe(df, out_file_name)
+        print("Successfully wrote file: ", out_file_name)
+    except:
+        print("File not written.")
+
+def checkExists(file):
+    """
+    Check if file exists
+    """
+    if not os.path.isfile(file):
+        raise FileNotFoundError("Input file %s does not exist." % file)
 
 
 if __name__ == "__main__":
