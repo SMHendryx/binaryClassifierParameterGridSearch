@@ -1,7 +1,9 @@
-# File runs cross validation on binary logistic regression classifier using sklearn functions
+# File runs cross validation on binary logistic regression classifier using sklearn functions.
+# Cross validation groups are defined by paper ID.
 #
-# Authored by Sean M. Hendryx while working at the University of Arizona
-# seanmhendryx@email.arizona.edu 2017 https://github.com/SMHendryx/binaryClassifierParameterGridSearch
+# Author: Sean Hendryx
+# 2017
+# seanmhendryx@email.arizona.edu https://github.com/SMHendryx/binaryClassifierParameterGridSearch
 
 
 import sys
@@ -110,6 +112,4 @@ print(np.mean(f1_scores_train))
 print("\n")
 print("Macro CV Average:")
 print(np.mean(f1_scores_cv))
-# Macro CV Average:
-# 0.0689176818342
 
